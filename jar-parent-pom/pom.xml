@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*
+* Copyright 2017 Eonian Technologies.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0             
+                http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.eoniantech.build</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>jar-parent-pom</artifactId>
+    <packaging>pom</packaging>
+    <name>Eonian Parent POM: JAR</name>
+    <description>Eonian Parent POM.</description>
+    <url>https://github.com/eonian-technologies/parent-pom</url>
+
+    <modules>
+        <module>war-parent-pom</module>
+    </modules>
+
+    <properties>
+        <!-- Project Build Properties -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target> 
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings> 
+        <maven.compiler.endorsedDir>${project.build.directory}/endorsed</maven.compiler.endorsedDir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Project Reporting Properties -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        
+        <!-- Testing Properties -->
+        <skipTests>false</skipTests>
+        <skipUnitTests>${skipTests}</skipUnitTests>
+        <skipIntegrationTests>${skipTests}</skipIntegrationTests> 
+
+        <!-- Static Code Analysis -->
+        <sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
+        <sonar.coverage.exclusions>**/application/config/*</sonar.coverage.exclusions>
+
+        <!-- Versions (The Spring Test Framework is not incl. in their BOM) -->
+        <spring.version>4.3.11.RELEASE</spring.version>
+    </properties>
+
+    <!-- Dependencies managed across all JAR projects -->
+    <dependencyManagement>
+        <dependencies> 
+            <!-- SLF4J -->
+            <dependency>
+                <groupId>com.eoniantech.build</groupId>
+                <artifactId>slf4j-bom</artifactId>
+                <version>1.7.25</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency> 
+
+            <!-- Logback -->
+            <dependency>
+                <groupId>com.eoniantech.build</groupId>
+                <artifactId>logback-bom</artifactId>
+                <version>1.2.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Logback JSON -->
+            <dependency>
+                <groupId>com.eoniantech.build</groupId>
+                <artifactId>logback-json-bom</artifactId>
+                <version>0.1.5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+       
+            <!-- AspectJ -->
+            <dependency>
+                <groupId>com.eoniantech.build</groupId>
+                <artifactId>aspectj-bom</artifactId>
+                <version>1.8.10</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.junit-toolbox</groupId>
+                <artifactId>junit-toolbox</artifactId>
+                <version>2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.10.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <!-- Enable replacements in resources. -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources> 
+
+        <!-- Enable replacements in test resources. -->
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <!-- Manage build plugins. -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.7.0</version>
+                    <configuration> 
+                        <compilerArguments>
+                            <endorseddirs>${maven.compiler.endorsedDir}</endorseddirs>
+                            <Xlint:all/>
+                        </compilerArguments>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version> 
+                </plugin> 
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.20.1</version> 
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.20.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.3.0.603</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.7.9</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin> 
+
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <!-- Compile with debugging info. -->
+        <profile>
+            <id>compile-with-debug</id>
+            <properties>
+                <maven.compiler.debug>true</maven.compiler.debug>    
+                <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
+                <maven.compiler.verbose>true</maven.compiler.verbose>
+            </properties> 
+        </profile>
+
+        <!-- Enforce dependency blacklist. --> 
+        <profile>
+            <id>enforce-dependencies</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>1.4.1</version>
+                        <executions>
+                            <execution>
+                                <id>enforce-blacklist</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <bannedDependencies>
+                                            <searchTransitive>true</searchTransitive>
+                                            <excludes>
+                                                <exclude>log4j:log4j</exclude>
+                                                <exclude>commons-logging</exclude>
+                                                <exclude>org.slf4j:slf4j-log4j12</exclude>
+                                                <exclude>org.slf4j:slf4j-jcl</exclude>
+                                                <exclude>org.slf4j:slf4j-jdk14</exclude>
+                                                <exclude>javax.servlet:servlet-api</exclude>
+                                                <exclude>javax.servlet:jsp-api</exclude>
+                                                <exclude>org.mortbay.jetty:servlet-api</exclude>
+                                                <exclude>org.mortbay.jetty:jsp-api</exclude>
+                                            </excludes>
+                                        </bannedDependencies>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile> 
+
+        <!-- Write the build.properties file with POM, Git, and CI info. -->
+        <profile>
+            <id>generate-build-properties</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src</exists>
+                </file>
+            </activation>
+            <properties>
+                <ci.build.number />
+                <ci.build.tag />
+                <ci.build.url />
+            </properties>
+            <build>
+                <plugins> 
+                    <!-- Set Git info as Maven properties. -->
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <version>2.2.3</version>
+                        <executions>
+                            <execution>
+                                <id>set-git-properties</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>revision</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <prefix>git</prefix>
+                            <dateFormat>yyyy-MM-dd'T'HH:mm:ss.SSSZ</dateFormat>
+                            <verbose>false</verbose>
+                            <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                            <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                            <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                        </configuration>
+                    </plugin>
+
+                    <!-- Write the build.properties file. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-build-properties</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration> 
+                                    <target>
+                                        <mkdir dir="target/classes/" />
+                                        <propertyfile file="target/classes/build.properties">
+                                            <entry key="pom.name" value="${project.name}" />
+                                            <entry key="pom.groupId" value="${project.groupId}" />
+                                            <entry key="pom.artifactId" value="${project.artifactId}" />
+                                            <entry key="pom.version" value="${project.version}" />
+                                            <entry key="pom.packaging" value="${project.packaging}" />
+                                            <entry key="git.branch" value="${git.branch}" /> 
+                                            <entry key="git.commit.tags" value="${git.tags}" /> 
+                                            <entry key="git.commit.id" value="${git.commit.id}" />
+                                            <entry key="git.commit.id.describe" value="${git.commit.id.describe}" />
+                                            <entry key="git.commit.id.abbrev" value="${git.commit.id.abbrev}" />
+                                            <entry key="git.commit.user.name" value="${git.commit.user.name}" />
+                                            <entry key="git.commit.user.email" value="${git.commit.user.email}" />
+                                            <entry key="git.commit.message.full" value="${git.commit.message.full}" />
+                                            <entry key="git.commit.message.short" value="${git.commit.message.short}" />
+                                            <entry key="git.commit.time" value="${git.commit.time}" />
+                                            <entry key="ci.build.number" value="${ci.build.number}" />
+                                            <entry key="ci.build.tag" value="${ci.build.tag}" />
+                                            <entry key="ci.build.url" value="${ci.build.url}" />
+                                        </propertyfile>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>commons-net</groupId>
+                                <artifactId>commons-net</artifactId>
+                                <version>3.3</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-commons-net</artifactId>
+                                <version>1.9.6</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-nodeps</artifactId>
+                                <version>1.8.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Unit Test -->
+        <profile>
+            <id>unit-test</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src/test</exists>
+                </file>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <!-- Code Coverage -->
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId> 
+                            <configuration>
+                                <excludes>
+                                    <exclude>${sonar.coverage.exclusions}</exclude>
+                                </excludes>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>jacoco-pre-unit-test</id>
+                                    <phase>process-test-classes</phase>
+                                    <goals>
+                                        <goal>prepare-agent</goal>
+                                    </goals> 
+                                    <configuration>
+                                        <skip>${skipUnitTests}</skip>
+                                        <destFile>${project.build.directory}/jacoco.exec</destFile>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>jacoco-post-unit-test</id>
+                                    <phase>test</phase>
+                                    <goals>
+                                        <goal>report</goal>
+                                    </goals> 
+                                    <configuration>
+                                        <skip>${skipUnitTests}</skip>
+                                        <destFile>${project.build.directory}/jacoco.exec</destFile>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+
+                        <!-- Surefire Plugin -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <configuration>
+                                <skipTests>${skipUnitTests}</skipTests> 
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>    
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- IT Test -->
+        <profile>
+            <id>integration-test</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src/test</exists>
+                </file>
+            </activation> 
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!-- Code Coverage -->
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <configuration>
+                                <excludes>
+                                    <exclude>${sonar.coverage.exclusions}</exclude>
+                                </excludes>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>jcoco-pre-integration-test</id>
+                                    <phase>pre-integration-test</phase>
+                                    <goals>
+                                        <goal>prepare-agent-integration</goal>
+                                    </goals>
+                                    <configuration> 
+                                        <skip>${skipIntegrationTests}</skip>
+                                        <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>jacoco-post-integration-test</id>
+                                    <phase>post-integration-test</phase>
+                                    <goals>
+                                        <goal>report-integration</goal>
+                                    </goals> 
+                                    <configuration>
+                                        <skip>${skipIntegrationTests}</skip>
+                                        <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                                    </configuration>
+                                </execution>
+                            </executions> 
+                        </plugin>
+
+                        <!-- Failsafe Plugin -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-failsafe-plugin</artifactId>
+                            <configuration>
+                                <skipTests>${skipIntegrationTests}</skipTests>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>integration-test</goal>
+                                        <goal>verify</goal>
+                                    </goals> 
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement> 
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId> 
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Attach sources -->
+        <profile>
+            <id>sources</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-source-plugin</artifactId>
+                            <version>3.0.1</version>
+                            <executions>
+                                <execution>
+                                    <id>attach-sources</id>
+                                    <goals>
+                                        <goal>jar-no-fork</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin> 
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>    
+                    </plugin>
+                </plugins>
+            </build> 
+        </profile>
+
+        <!-- Attach Javadoc -->
+        <profile>
+            <id>javadoc</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>2.10.4</version>
+                            <executions>
+                                <execution>
+                                    <id>attach-javadocs</id>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                    <configuration>
+                                        <additionalparam>-Xdoclint:none</additionalparam>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>    
+                </plugins>
+            </build>
+        </profile> 
+    </profiles> 
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/eonian-technologies/parent-pom</url>
+        <connection>scm:git:https://github.com/eonian-technologies/parent-pom.git</connection>
+        <developerConnection>scm:git:git@github.com:eonian-technologies/parent-pom.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>Michael.Andrews</id>
+            <name>Michael Andrews</name>
+            <organization>Eonian Technologies</organization>
+            <url>https://github.com/eonian-technologies</url>
+            <roles>
+                <role>owner</role>
+                <role>developer</role>
+            </roles>
+            <email>Michael.Andrews@eoniantech.com</email>
+            <timezone>-5</timezone>
+        </developer>
+    </developers>
+</project>
