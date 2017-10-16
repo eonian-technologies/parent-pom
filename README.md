@@ -16,12 +16,12 @@ mvn jacoco:prepare-agent surefire:test jacoco:report
 
 ### Integration Test (JAR projects)
 ```
-mvn jacoco:prepare-agent-integration failsafe:integration-test jacoco:report-integration
+mvn jacoco:prepare-agent-integration failsafe:integration-test jacoco:report-integration failsafe:verify
 ```
 
 ### Integration Test (WAR projects)
 ```
-mvn jacoco:prepare-agent-integration cargo:start failsafe:integration-test jacoco:dump cargo:stop jacoco:report-integration
+mvn jacoco:prepare-agent-integration cargo:start failsafe:integration-test jacoco:dump cargo:stop jacoco:report-integration failsafe:verify
 ```
 
 ### Code Analysis
