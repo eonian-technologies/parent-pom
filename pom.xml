@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 *
-* Copyright 2017 Eonian Technologies.
+* Copyright 2018 Eonian Technologies.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -39,11 +39,11 @@
         <pluginManagement>
             <plugins>
                 <!-- Nexus plugin for deploying to the Sonatype repo. -->
-                <!-- Automatially bound to the deploy goal. -->
+                <!-- Automatically bound to the deploy goal. -->
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.7</version>
+                    <version>1.6.8</version>
                     <extensions>true</extensions>
                     <configuration>
                         <serverId>ossrh</serverId>
@@ -62,7 +62,7 @@
     </build>
 
     <profiles>
-        <!-- Sign the artifacts with GunuPG -->
+        <!-- Sign the artifacts with GnuPG -->
         <profile>
             <id>sign</id> 
             <build>
@@ -84,7 +84,7 @@
                                             <arg>--pinentry-mode</arg>
                                             <arg>loopback</arg>
                                         </gpgArguments> 
-                                        <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                                        <passphraseServerId>${gpg.keyName}</passphraseServerId>
                                     </configuration>
                                 </execution>
                             </executions>
@@ -139,5 +139,4 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
 </project>
