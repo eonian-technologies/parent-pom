@@ -11,17 +11,17 @@ mvn -DskipTests clean verify
 
 ### Unit Test
 ```
-mvn jacoco:prepare-agent surefire:test jacoco:report
+mvn jacoco:prepare-agent@preTest surefire:test jacoco:report@postTest
 ```
 
 ### Integration Test (JAR projects)
 ```
-mvn jacoco:prepare-agent-integration failsafe:integration-test jacoco:report-integration failsafe:verify
+mvn jacoco:prepare-agent-integration@preIT failsafe:integration-test jacoco:report-integration@postIT failsafe:verify
 ```
 
 ### Integration Test (WAR projects)
 ```
-mvn jacoco:prepare-agent-integration cargo:start failsafe:integration-test jacoco:dump cargo:stop jacoco:report-integration failsafe:verify
+mvn jacoco:prepare-agent-integration@preIT cargo:start@preIT failsafe:integration-test jacoco:dump@postIT cargo:stop@postIT jacoco:report-integration@postIT failsafe:verify
 ```
 
 ### Code Analysis
