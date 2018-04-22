@@ -537,7 +537,7 @@
 
         <!-- Attach sources -->
         <profile>
-            <id>sources</id>
+            <id>source</id>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -547,7 +547,8 @@
                             <version>3.0.1</version>
                             <executions>
                                 <execution>
-                                    <id>attach-sources</id>
+                                    <id>attach-source</id>
+                                    <phase>package</phase>
                                     <goals>
                                         <goal>jar-no-fork</goal>
                                     </goals>
@@ -579,9 +580,10 @@
                             <version>3.0.0</version>
                             <executions>
                                 <execution>
-                                    <id>attach-javadocs</id>
+                                    <id>attach-javadoc</id>
+                                    <phase>package</phase>
                                     <goals>
-                                        <goal>javadoc-no-fork</goal>
+                                        <goal>jar</goal>
                                     </goals>
                                 </execution>
                             </executions>
