@@ -26,7 +26,7 @@
     <parent> 
         <groupId>com.eoniantech.build</groupId>
         <artifactId>jar-parent-pom</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -37,7 +37,14 @@
     <url>https://github.com/eonian-technologies/parent-pom</url>
 
     <properties>
-        <javaeeWebApi.version>7.0</javaeeWebApi.version>
+        <javaeeWebApi.version>8.0</javaeeWebApi.version>
+        <itServerId>tomcat9x</itServerId>
+        <itServerPort>8080</itServerPort>
+        <itServerAjpPort>8009</itServerAjpPort>
+        <itServerRmiPort>1099</itServerRmiPort>
+        <itServerDumpPort>6300</itServerDumpPort>
+        <itServerContext>/${project.artifactId}</itServerContext>
+        <appJvmArgs></appJvmArgs>
     </properties>
 
     <dependencyManagement>
@@ -47,22 +54,6 @@
                 <groupId>javax</groupId>
                 <artifactId>javaee-web-api</artifactId>
                 <version>${javaeeWebApi.version}</version> 
-            </dependency>
-
-            <!-- JAX-RS 2.1 API -->
-            <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>javax.ws.rs-api</artifactId>
-                <version>2.1-m09</version>
-            </dependency>
-
-            <!-- JAX-RS 2.1 Provider -->
-            <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>2.26-b08</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -74,87 +65,18 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                     <configuration>
                         <failOnMissingWebXml>false</failOnMissingWebXml>
                         <packagingExcludes>META-INF/context.xml</packagingExcludes> 
-                    </configuration>
-                </plugin> 
-                
-                <!-- Docker plugin. -->
-                <!-- Child projects bring CATALINA_BASE dir. -->
-                <plugin>
-                    <groupId>com.spotify</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <configuration>
-                        <useConfigFile>true</useConfigFile>
-                        <imageName>${project.artifactId}</imageName>
-                        <dockerDirectory>docker</dockerDirectory>
-                        <resources>
-                            <resource>
-                                <targetPath>/CATALINA_BASE/build</targetPath>
-                                <directory>${project.build.directory}</directory>
-                                <include>${project.build.finalName}-${project.version}.war</include>
-                            </resource>
-                        </resources>
-                        <forceTags>true</forceTags>
-                        <imageTags>
-                            <imageTag>${project.version}</imageTag>
-                        </imageTags>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement> 
     </build>
 
-    <profiles> 
-        <!-- Copy the JavaEE Endoresed API to the endorsed directory. -->
-        <profile>
-            <id>endorsed-dependencies</id>
-            <activation> 
-                <file>
-                    <exists>${basedir}/src/main/webapp</exists>
-                </file>
-            </activation> 
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-dependency-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <phase>validate</phase>
-                                    <goals>
-                                        <goal>copy</goal>
-                                    </goals>
-                                    <configuration>
-                                        <outputDirectory>${maven.compiler.endorsedDir}</outputDirectory>
-                                        <silent>false</silent>
-                                        <artifactItems>
-                                            <artifactItem>
-                                                <groupId>javax</groupId>
-                                                <artifactId>javaee-endorsed-api</artifactId>
-                                                <version>${javaeeWebApi.version}</version>
-                                                <type>jar</type>
-                                            </artifactItem>
-                                        </artifactItems>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>   
-                </pluginManagement>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>    
-                    </plugin>
-                </plugins>
-            </build> 
-        </profile>
-
-        <!-- Override the IT Test profile to deploy to Tomcat. -->
+    <profiles>
+        <!-- Run integration tests against Tomcat with code coverage -->
         <profile>
             <id>integration-test</id>
             <activation>
@@ -163,30 +85,21 @@
                 </file> 
             </activation>
             <properties>
-                <itServerId>tomcat8x</itServerId>
                 <itServerHome>${project.build.directory}/${itServerId}</itServerHome>
-                <itServerDownloadSite>http://archive.apache.org/dist/tomcat</itServerDownloadSite>
-                <itServerDownloadPath>/tomcat-8/v8.0.26/bin/apache-tomcat-8.0.26.zip</itServerDownloadPath>
-                <itServerDownloadUrl>${itServerDownloadSite}${itServerDownloadPath}</itServerDownloadUrl>
-                <itApplicationContext>/${project.artifactId}</itApplicationContext>
-                <itJvmArgs>-Dcom.eonian.env=maven</itJvmArgs> 
-                <jacoco.port>${itServerDumpPort}</jacoco.port>
-            </properties> 
+            </properties>
             <build>
                 <pluginManagement> 
-                    <!-- Code Coverage -->
                     <plugins>
+
+                        <!-- Code coverage -->
                         <plugin>
                             <groupId>org.jacoco</groupId>
                             <artifactId>jacoco-maven-plugin</artifactId>
-                            <configuration>
-                                <excludes>
-                                    <exclude>**/application/config/*</exclude>
-                                </excludes>
-                            </configuration>
                             <executions>
+
+                                <!-- Before running integration tests -->
                                 <execution>
-                                    <id>jacoco-pre-integration-test</id>
+                                    <id>preIT</id>
                                     <phase>pre-integration-test</phase>
                                     <goals>
                                         <goal>prepare-agent-integration</goal>
@@ -194,10 +107,13 @@
                                     <configuration>
                                         <skip>${skipIntegrationTests}</skip>
                                         <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                                        <propertyName>argLine</propertyName>
                                     </configuration>
                                 </execution>
+
+                                <!-- After integration tests -->
                                 <execution>
-                                    <id>jacoco-post-integration-test</id>
+                                    <id>postIT</id>
                                     <phase>post-integration-test</phase>
                                     <goals>
                                         <goal>dump</goal>
@@ -212,43 +128,42 @@
                             </executions>
                         </plugin> 
 
-                        <!-- Cargo -->
+                        <!-- Tomcat -->
                         <plugin>
                             <groupId>org.codehaus.cargo</groupId>
                             <artifactId>cargo-maven2-plugin</artifactId>
                             <version>1.6.2</version>
                             <configuration>
                                 <container>
-                                    <containerId>${itServerId}</containerId> 
-                                    <zipUrlInstaller>
-                                        <url>${itServerDownloadUrl}</url>
-                                        <downloadDir>${java.io.tmpdir}/downloads</downloadDir>
-                                        <extractDir>${java.io.tmpdir}/extracts</extractDir>
-                                    </zipUrlInstaller>
+                                    <containerId>${itServerId}</containerId>
                                     <output>${itServerHome}/logs/catalina.out</output> 
                                 </container>
                                 <configuration>
                                     <type>standalone</type>
                                     <home>${itServerHome}</home>
-                                    <properties>
+                                    <properties> 
                                         <cargo.servlet.port>${itServerPort}</cargo.servlet.port>
                                         <cargo.tomcat.ajp.port>${itServerAjpPort}</cargo.tomcat.ajp.port>
-                                        <cargo.jvmargs>
-                                            ${argLine},output=tcpserver,port=${itServerDumpPort} ${itJvmArgs}
-                                        </cargo.jvmargs>
+                                        <cargo.rmi.port>${itServerRmiPort}</cargo.rmi.port>
+                                        <cargo.start.jvmargs>
+                                            ${argLine},output=tcpserver,port=${itServerDumpPort}
+                                            ${appJvmArgs} ${jvmArgs}
+                                        </cargo.start.jvmargs>
                                     </properties>
                                 </configuration>
                                 <deployables>
                                     <deployable>
                                         <properties>
-                                            <context>${itApplicationContext}</context>
+                                            <context>${itServerContext}</context>
                                         </properties>
                                     </deployable>
                                 </deployables>
                             </configuration>
                             <executions>
+
+                                <!-- Before integration tests -->
                                 <execution>
-                                    <id>cargo-pre-integration-test</id>
+                                    <id>preIT</id>
                                     <phase>pre-integration-test</phase>
                                     <goals>
                                         <goal>start</goal>
@@ -257,8 +172,10 @@
                                         <skip>${skipIntegrationTests}</skip>
                                     </configuration>
                                 </execution>
+
+                                <!-- After integration tests -->
                                 <execution>
-                                    <id>cargo-post-integration-test</id>
+                                    <id>postIT</id>
                                     <phase>post-integration-test</phase>
                                     <goals>
                                         <goal>stop</goal>
@@ -268,9 +185,11 @@
                                     </configuration>
                                 </execution>
                             </executions>
-                        </plugin>
+                        </plugin> 
                     </plugins>
                 </pluginManagement>
+
+                <!-- Use in lifecycle -->
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
@@ -283,33 +202,5 @@
                 </plugins>
             </build>
         </profile>
-    </profiles> 
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <url>https://github.com/eonian-technologies/parent-pom</url>
-        <connection>scm:git:https://github.com/eonian-technologies/parent-pom.git</connection>
-        <developerConnection>scm:git:git@github.com:eonian-technologies/parent-pom.git</developerConnection>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>Michael.Andrews</id>
-            <name>Michael Andrews</name>
-            <organization>Eonian Technologies</organization>
-            <url>https://github.com/eonian-technologies</url>
-            <roles>
-                <role>owner</role>
-                <role>developer</role>
-            </roles>
-            <email>Michael.Andrews@eoniantech.com</email>
-            <timezone>-5</timezone>
-        </developer>
-    </developers>
+    </profiles>
 </project>
