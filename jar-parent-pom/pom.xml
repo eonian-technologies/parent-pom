@@ -26,7 +26,7 @@
     <parent>
         <groupId>com.eoniantech.build</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -58,7 +58,7 @@
         <skipUnitTests>${skipTests}</skipUnitTests>
         <skipIntegrationTests>${skipTests}</skipIntegrationTests>
         <jvmArgs></jvmArgs>
-        
+
         <!-- Static code analysis -->
         <sonar.coverage.exclusions>**/application/config/*</sonar.coverage.exclusions>
     </properties>
@@ -179,13 +179,14 @@
     </build>
 
     <profiles>
-        <!-- Java9 Support -->
+        <!-- Jigsaw Support -->
         <profile>
-            <id>java9</id>
+            <id>jigsaw-support</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>[9,)</jdk>
             </activation>
             <properties>
+                <!-- JVM args for forked processes -->
                 <jvmArgs>--add-modules java.xml.bind</jvmArgs>
             </properties>
         </profile>
@@ -537,7 +538,7 @@
 
         <!-- Attach sources -->
         <profile>
-            <id>sources</id>
+            <id>source</id>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -547,7 +548,8 @@
                             <version>3.0.1</version>
                             <executions>
                                 <execution>
-                                    <id>attach-sources</id>
+                                    <id>attach-source</id>
+                                    <phase>package</phase>
                                     <goals>
                                         <goal>jar-no-fork</goal>
                                     </goals>
@@ -579,9 +581,10 @@
                             <version>3.0.0</version>
                             <executions>
                                 <execution>
-                                    <id>attach-javadocs</id>
+                                    <id>attach-javadoc</id>
+                                    <phase>package</phase>
                                     <goals>
-                                        <goal>javadoc-no-fork</goal>
+                                        <goal>jar</goal>
                                     </goals>
                                 </execution>
                             </executions>
