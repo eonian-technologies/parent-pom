@@ -58,7 +58,7 @@
         <skipUnitTests>${skipTests}</skipUnitTests>
         <skipIntegrationTests>${skipTests}</skipIntegrationTests>
         <jvmArgs></jvmArgs>
-        
+
         <!-- Static code analysis -->
         <sonar.coverage.exclusions>**/application/config/*</sonar.coverage.exclusions>
     </properties>
@@ -179,13 +179,14 @@
     </build>
 
     <profiles>
-        <!-- Java9 Support -->
+        <!-- Jigsaw Support -->
         <profile>
-            <id>java9</id>
+            <id>jigsaw-support</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>[9,)</jdk>
             </activation>
             <properties>
+                <!-- JVM args for forked processes -->
                 <jvmArgs>--add-modules java.xml.bind</jvmArgs>
             </properties>
         </profile>
